@@ -9,6 +9,7 @@ import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import type { SitePost } from '@/lib/site-connector'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { pagesContent } from '@/editable/content/pages.content'
+import { Ads } from '@/lib/ads'
 
 export const revalidate = 3
 
@@ -117,6 +118,8 @@ export default async function SearchPage({ searchParams }: { searchParams?: Prom
               <button className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-2xl bg-[var(--editable-page-text,#2f1d16)] px-6 text-sm font-black uppercase tracking-[0.18em] text-[var(--editable-page-bg,#fff7ee)] transition hover:-translate-y-0.5" type="submit">Search</button>
             </form>
           </div>
+
+          <Ads slot="in-feed" size="billboard" showLabel eager className="mx-auto mt-6 w-full max-w-[970px]" />
 
           <div className="mt-10 flex flex-wrap items-end justify-between gap-4">
             <div>
