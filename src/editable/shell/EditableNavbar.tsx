@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, Search, UserPlus, LogIn, X, PlusCircle } from 'lucide-react'
+import { Globe, LogIn, Menu, PlusCircle, Search, UserPlus, X } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { globalContent } from '@/editable/content/global.content'
 import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
@@ -16,125 +16,129 @@ export function EditableNavbar() {
     () => SITE_CONFIG.tasks.filter((task) => task.enabled).map((task) => ({ label: task.label, href: task.route })),
     []
   )
+  const visibleNavItems = navItems.filter((item) => !['Image', 'Profile'].includes(item.label))
 
   return (
-    <header className="sticky top-0 z-50 bg-[var(--editable-nav-bg)]/96 text-[var(--editable-nav-text)] backdrop-blur-md">
-      <div className="h-[3px] bg-[linear-gradient(90deg,transparent_0%,var(--slot4-accent)_20%,var(--slot4-accent)_80%,transparent_100%)]" />
-
-      <nav className="mx-auto flex min-h-[76px] w-full max-w-[var(--editable-container)] items-center gap-5 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="group flex shrink-0 items-center gap-3 border-r border-[var(--editable-border)] pr-5">
-          <span className="flex h-11 w-11 items-center justify-center border border-[var(--slot4-accent)]/45 bg-[var(--slot4-surface-bg)] transition group-hover:border-[var(--slot4-accent)]">
+    <header className="sticky top-0 z-50 border-b border-[var(--editable-border)] bg-[var(--editable-nav-bg)] text-[var(--editable-nav-text)] backdrop-blur-xl">
+      <nav className="mx-auto flex min-h-[86px] w-full max-w-[var(--editable-container)] items-center gap-4 px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex shrink-0 items-center gap-3">
+          <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-[var(--editable-border)] bg-white shadow-[0_8px_20px_rgba(9,20,19,0.06)]">
             <img src="/favicon.png?v=20260413" alt={SITE_CONFIG.name} className="h-8 w-8 object-contain" />
           </span>
-          <span className="hidden min-w-0 md:block">
-            <span className="editable-display block max-w-[200px] truncate text-xl font-semibold leading-none tracking-[0.01em]">{SITE_CONFIG.name}</span>
-            <span className="mt-1 block max-w-[200px] truncate text-[10px] font-medium uppercase tracking-[0.26em] text-[var(--slot4-muted-text)]">
-              {globalContent.nav?.tagline || SITE_CONFIG.tagline}
-            </span>
+          <span className="editable-display text-[2.1rem] font-extrabold leading-none tracking-[-0.08em] text-[var(--slot4-page-text)]">
+            {SITE_CONFIG.name.replace(/\.[^.]+$/, '')}
+            <span className="text-[var(--slot4-accent-fill)]">.</span>
           </span>
         </Link>
 
-        <div className="hidden items-stretch gap-0 lg:flex">
-          {navItems.slice(0, 5).map((item) => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative flex items-center px-4 text-[11px] font-semibold uppercase tracking-[0.22em] transition ${
-                  active ? 'text-[var(--slot4-accent)]' : 'text-[var(--slot4-muted-text)] hover:text-[var(--slot4-page-text)]'
-                }`}
-              >
-                {item.label}
-                {active ? <span className="absolute inset-x-3 bottom-0 h-[2px] bg-[var(--slot4-accent)]" /> : null}
-              </Link>
-            )
-          })}
-        </div>
-
-        <form action="/search" className="mx-auto hidden min-w-0 flex-1 justify-center md:flex">
-          <label className="flex w-full max-w-md items-center gap-2 border-b border-[var(--slot4-accent)]/30 pb-2 transition focus-within:border-[var(--slot4-accent)]">
-            <Search className="h-4 w-4 shrink-0 text-[var(--slot4-accent)]" />
+        <form action="/search" className="hidden min-w-0 flex-1 items-center justify-center lg:flex">
+          <div className="flex w-full max-w-[36rem] items-center overflow-hidden rounded-2xl border border-[var(--editable-border)] bg-white shadow-[0_10px_30px_rgba(9,20,19,0.06)]">
             <input
               name="q"
               type="search"
-              placeholder="Search posts"
-              className="min-w-0 flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-[var(--slot4-muted-text)]"
+              placeholder="What are you looking for today?"
+              className="h-12 min-w-0 flex-1 bg-transparent px-5 text-sm font-medium outline-none placeholder:text-[var(--slot4-soft-muted-text)]"
             />
-          </label>
+            <button className="flex h-12 w-14 items-center justify-center bg-[var(--slot4-dark-bg)] text-white transition hover:bg-[var(--slot4-accent)]" aria-label="Search">
+              <Search className="h-5 w-5" />
+            </button>
+          </div>
         </form>
 
-        <div className="ml-auto flex shrink-0 items-center gap-2">
+        <div className="ml-auto hidden items-center gap-6 text-sm font-semibold lg:flex">
+          <span className="inline-flex items-center gap-2 text-[var(--slot4-muted-text)]">
+            <Globe className="h-4 w-4" /> English
+          </span>
+          <Link href="/contact" className="hover:text-[var(--slot4-accent)]">
+            Contact
+          </Link>
           {session ? (
             <>
-              <Link
-                href="/create"
-                className="hidden items-center gap-2 border border-[var(--slot4-accent)] bg-[var(--editable-cta-bg)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--editable-cta-text)] transition hover:opacity-90 sm:inline-flex"
-              >
-                <PlusCircle className="h-3.5 w-3.5" /> Create
+              <Link href="/create" className="hover:text-[var(--slot4-accent)]">
+                Create
               </Link>
-              <button
-                type="button"
-                onClick={logout}
-                className="hidden items-center gap-2 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)] sm:inline-flex"
-              >
+              <button type="button" onClick={logout} className="text-[var(--slot4-muted-text)] hover:text-[var(--slot4-accent)]">
                 Logout
               </button>
             </>
           ) : (
             <>
-              <Link
-                href="/login"
-                className="hidden items-center gap-2 border border-[var(--editable-border)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--slot4-muted-text)] transition hover:border-[var(--slot4-accent)]/40 hover:text-[var(--slot4-page-text)] sm:inline-flex"
-              >
-                <LogIn className="h-3.5 w-3.5" /> Login
+              <Link href="/login" className="hover:text-[var(--slot4-accent)]">
+                Sign in
               </Link>
               <Link
                 href="/signup"
-                className="hidden items-center gap-2 border border-[var(--slot4-accent)] bg-[var(--editable-cta-bg)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--editable-cta-text)] transition hover:opacity-90 sm:inline-flex"
+                className="rounded-xl border border-[var(--slot4-dark-bg)] px-5 py-3 text-sm font-bold transition hover:bg-[var(--slot4-dark-bg)] hover:text-white"
               >
-                <UserPlus className="h-3.5 w-3.5" /> Sign up
+                Join
               </Link>
             </>
           )}
-          <button
-            type="button"
-            onClick={() => setOpen((value) => !value)}
-            className="border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)] p-2 lg:hidden"
-            aria-label="Toggle menu"
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--editable-border)] bg-white lg:hidden"
+          aria-label="Toggle menu"
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </nav>
 
-      <div className="h-px bg-[var(--editable-border)]" />
-
       {open ? (
-        <div className="border-t border-[var(--editable-border)] bg-[var(--editable-nav-bg)] px-4 py-5 lg:hidden">
-          <form action="/search" className="mb-5 flex items-center gap-2 border-b border-[var(--slot4-accent)]/30 pb-2">
-            <Search className="h-4 w-4 text-[var(--slot4-accent)]" />
-            <input name="q" type="search" placeholder="Search posts" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--slot4-muted-text)]" />
+        <div className="border-t border-[var(--editable-border)] bg-[var(--slot4-cream)] px-4 py-5 lg:hidden">
+          <form action="/search" className="flex items-center overflow-hidden rounded-2xl border border-[var(--editable-border)] bg-white">
+            <input
+              name="q"
+              type="search"
+              placeholder="Search everything"
+              className="h-12 min-w-0 flex-1 bg-transparent px-4 text-sm outline-none"
+            />
+            <button className="flex h-12 w-12 items-center justify-center bg-[var(--slot4-dark-bg)] text-white" aria-label="Search">
+              <Search className="h-4 w-4" />
+            </button>
           </form>
-          <div className="grid gap-1">
-            {[{ label: 'Home', href: '/' }, ...navItems, { label: 'Contact', href: '/contact' }, ...(session ? [{ label: 'Create', href: '/create' }] : [{ label: 'Login', href: '/login' }, { label: 'Sign up', href: '/signup' }])].map((item) => {
+
+          <div className="mt-5 grid gap-2">
+            {[{ label: 'Home', href: '/' }, ...visibleNavItems, { label: 'Contact', href: '/contact' }].map((item) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className={`border-l-2 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] ${
-                    active
-                      ? 'border-[var(--slot4-accent)] bg-[var(--slot4-surface-bg)] text-[var(--slot4-accent)]'
-                      : 'border-transparent text-[var(--slot4-muted-text)] hover:border-[var(--slot4-accent)]/40 hover:bg-[var(--slot4-surface-bg)]'
-                  }`}
+                  className={`rounded-2xl px-4 py-3 text-sm font-semibold transition ${active ? 'bg-[var(--slot4-dark-bg)] text-white' : 'bg-white text-[var(--slot4-page-text)] hover:bg-[var(--slot4-panel-bg)]'}`}
                 >
                   {item.label}
                 </Link>
               )
             })}
           </div>
+
+          <div className="mt-5 grid gap-2">
+            {session ? (
+              <>
+                <Link href="/create" onClick={() => setOpen(false)} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[var(--slot4-accent-fill)] px-4 py-3 text-sm font-bold text-white">
+                  <PlusCircle className="h-4 w-4" /> Create
+                </Link>
+                <button type="button" onClick={logout} className="rounded-2xl border border-[var(--editable-border)] bg-white px-4 py-3 text-sm font-semibold">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setOpen(false)} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[var(--editable-border)] bg-white px-4 py-3 text-sm font-semibold">
+                  <LogIn className="h-4 w-4" /> Login
+                </Link>
+                <Link href="/signup" onClick={() => setOpen(false)} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[var(--slot4-dark-bg)] px-4 py-3 text-sm font-bold text-white">
+                  <UserPlus className="h-4 w-4" /> Join
+                </Link>
+              </>
+            )}
+          </div>
+
+          <p className="mt-4 text-xs uppercase tracking-[0.2em] text-[var(--slot4-soft-muted-text)]">{globalContent.nav.tagline}</p>
         </div>
       ) : null}
     </header>
